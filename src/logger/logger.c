@@ -1,10 +1,16 @@
 
+#include <stdio.h>
+#include <stdarg.h>
 #include <teabot/logger/logger.h>
 
-size_t normal_log(char *format, ...) {
+int __log(const char *format, ...) {
 
-}
+	va_list args;
 
-size_t verbose_log(char *format, ...) {
+	va_start(args, format);
+	int ret = vprintf(format, args);
+	printf("\n");
+	va_end(args);
 
+	return ret;
 }
