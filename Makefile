@@ -29,7 +29,7 @@ ${ROOT_DEPDIR}:
 ${DEPDIR}: | ${ROOT_DEPDIR}
 	mkdir -p $@
 
-${OBJECTS}:
+${OBJECTS}: ${DEPDIR}
 	${COMPILER} ${DEPFLAGS} ${COMPILER_FLAGS} $@ ${@:%.o=%}
 
 ${BIN_FILE}: ${OBJECTS}
@@ -45,4 +45,4 @@ release:
 clean:
 	rm -rf ${DEPFILES}
 	rm -rf ${OBJECTS}
-	rm -rf ${BIN}
+	rm -rf ${BIN_FILE}
