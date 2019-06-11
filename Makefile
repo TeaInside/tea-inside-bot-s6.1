@@ -3,6 +3,8 @@ COMPILER = g++
 LINKER = g++
 BIN_FILE = teabot
 LIBS = -lpthread -lcurl
+SOURCE_DIR = src/
+ROOT_DEPDIR = .deps
 
 ifeq (${RELEASE_MODE},1)
 	LINKER_FLAGS  = -Wall -fno-stack-protector -s -O3 -o
@@ -12,11 +14,10 @@ else
 	COMPILER_FLAGS = -Wall -fno-stack-protector -Iinclude/ -ggdb3 -Og -c -o
 endif
 
-SOURCES = $(shell find src -name '*.c')
+SOURCES = $(shell find ${SOURCE_DIR} -name '*.c')
 OBJECTS = $(SOURCES:%.c=%.c.o)
-SOURCES_DIR = $(shell find src -type d)
+SOURCES_DIR = $(shell find ${SOURCE_DIR} -type d)
 
-ROOT_DEPDIR = .deps
 DEPDIR = ${SOURCES_DIR:%=${ROOT_DEPDIR}/%}
 DEPFLAGS = -MT $@ -MMD -MP -MF ${ROOT_DEPDIR}/$*.d
 DEPFILES = ${SOURCES:%=${ROOT_DEPDIR}/%.d}
@@ -29,7 +30,7 @@ ${ROOT_DEPDIR}:
 ${DEPDIR}: | ${ROOT_DEPDIR}
 	mkdir -p $@
 
-${OBJECTS}: ${DEPDIR}
+${OBJECTS}: | ${DEPDIR}
 	${COMPILER} ${DEPFLAGS} ${COMPILER_FLAGS} $@ ${@:%.o=%}
 
 ${BIN_FILE}: ${OBJECTS}
