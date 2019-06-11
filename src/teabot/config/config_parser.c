@@ -7,11 +7,13 @@
 
 #define CMP(A,B,N) (N == sizeof(B)) && strncmp(A, B, N)
 
-char *bot_token;
+char *bot_token = NULL;
+size_t bot_token_size = 0;
 char **sudoers;
 uint8_t sudoers_count = 0;
 bool _verbose = true;
 bool _warning = true;
+uint8_t threads_amount = 3;
 
 bool init_config(int argc, char *argv[], char *envp[]) {
 
@@ -46,7 +48,7 @@ bool init_config(int argc, char *argv[], char *envp[]) {
 					memcpy(bot_token, &(buff[i + 1]), llen - i - 1);
 					bot_token[llen - i] = '\0';
 					TRIMN(bot_token, llen - i - 1)
-					printf("test\n");
+					bot_token_size = strlen(bot_token);
 					verbose_log("Bot token has been loaded: %s", bot_token);
 				}
 			}
@@ -56,7 +58,7 @@ bool init_config(int argc, char *argv[], char *envp[]) {
 		line++;
 	}
 	fclose(handle);
-	return true;
+	return bot_token != NULL;
 }
 
 #undef CMP

@@ -7,5 +7,6 @@
 *.lock
 /.deps
 /teabot
+/storage/
 /.phpintel/
 /teabot.conf
