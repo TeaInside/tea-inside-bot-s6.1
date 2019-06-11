@@ -2,14 +2,14 @@
 COMPILER = g++
 LINKER = g++
 BIN_FILE = teabot
-LIBS = -lpthread
+LIBS = -lpthread -lcurl
 
 ifeq (${RELEASE_MODE},1)
-	LINKER_FLAGS  = -s -O3
-	COMPILER_FLAGS = -Iinclude/ -s -O3 -c -o
+	LINKER_FLAGS  = -Wall -fno-stack-protector -s -O3 -o
+	COMPILER_FLAGS = -Wall -fno-stack-protector -Iinclude/ -s -O3 -c -o
 else
-	LINKER_FLAGS  = -g3 -ggdb -O0 -o
-	COMPILER_FLAGS = -Iinclude/ -ggdb3 -O0 -c -o
+	LINKER_FLAGS  = -Wall -fno-stack-protector -g3 -ggdb -Og -o
+	COMPILER_FLAGS = -Wall -fno-stack-protector -Iinclude/ -ggdb3 -Og -c -o
 endif
 
 SOURCES = $(shell find src -name '*.c')
@@ -26,18 +26,21 @@ all: ${BIN_FILE}
 ${ROOT_DEPDIR}:
 	mkdir -p $@
 
-${DEPDIR}: ${ROOT_DEPDIR}
+${DEPDIR}: | ${ROOT_DEPDIR}
 	mkdir -p $@
 
-${DEPFILES}: ${DEPDIR}
-
-${OBJECTS}: ${DEPFILES}
+${OBJECTS}:
 	${COMPILER} ${DEPFLAGS} ${COMPILER_FLAGS} $@ ${@:%.o=%}
 
 ${BIN_FILE}: ${OBJECTS}
 	${LINKER} ${LINKER_FLAGS} ${BIN_FILE} ${OBJECTS} ${LIBS}
 
 -include ${DEPFILES}
+
+release:
+	make clean
+	make RELEASE_MODE=1
+	strip -s ${BIN_FILE}
 
 clean:
 	rm -rf ${DEPFILES}

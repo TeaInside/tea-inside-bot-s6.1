@@ -1,22 +1,12 @@
 
 #include <stdio.h>
-#include <unistd.h>
-#include <pthread.h>
-
-
-void *myRoutine(void *me) {
-	while(1) {
-		printf("test");
-	    sleep(1);
-	}
-}
+#include <teabot/config/config_parser.h>
 
 int main(int argc, char *argv[], char *envp[]) {
 
+	if (init_config(argc, argv, envp)) {
 
-	pthread_t tid;
-	pthread_create(&tid, NULL, myRoutine, NULL);
-	pthread_join(tid, NULL);
-
+	}
+	
 	return 0;
 }
