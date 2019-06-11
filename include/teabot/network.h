@@ -3,7 +3,7 @@
 #define teabot__network
 
 char *send_message();
-void run_teabot();
+int run_teabot(int latest_update_id);
 void *teabot_thread(void *);
 
 #endif
