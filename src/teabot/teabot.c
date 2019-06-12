@@ -147,7 +147,7 @@ void run_daemon() {
 			}
 
 			if (!dispatched) {
-				verbose_log("All threads are busy, waiting for the next queue...");
+				verbose_log("All threads are busy, waiting for the next available thread...");
 				sleep(1);
 				goto _start_dispatch;
 			}
