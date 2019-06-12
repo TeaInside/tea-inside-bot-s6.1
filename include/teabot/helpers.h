@@ -1,6 +1,6 @@
 
-#ifndef teabot__helpers
-#define teabot__helpers
+#ifndef teabot__helpers_h
+#define teabot__helpers_h
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,31 +9,16 @@
 #include <stdbool.h>
 #include <teabot/logger/logger.h>
 
-#define TRIMN(A, N) \
-	if (A[0] == ' ') { \
-		for (size_t _i = 1; _i < N; _i++) { \
-			if (A[_i] != ' ') { \
-				memcpy(A, &(A[_i]), N - _i); \
-				A[N - _i] = '\0'; \
-				break; \
-			} \
-		} \
-	} \
-	if (A[N - 1] == ' ') { \
-		for (size_t _i = N - 2; _i >= 0; _i--) { \
-			if (A[_i] != ' ') { \
-				A[_i + 1] = '\0'; \
-				break; \
-			} \
-		} \
-	}
-
 #ifndef IN_CONFIG_PARSER
 	extern bool _verbose;
 	extern bool _warning;
 	extern char *bot_token;
 	extern size_t bot_token_size;
 #endif
+
+char *trim(char *str, const char *seps = NULL);
+char *rtrim(char *str, const char *seps = NULL);
+char *ltrim(char *str, const char *seps = NULL);
 
 #define verbose_log(...) \
 	if (_verbose) __log(__VA_ARGS__)

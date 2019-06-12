@@ -5,7 +5,9 @@
 #include <teabot/helpers.h>
 #include <teabot/config/config_parser.h>
 
-#define CMP(A,B,N) (N == sizeof(B)) && strncmp(A, B, N)
+#undef IN_CONFIG_PARSER
+
+#define QCMP(A, B, NA) ((NA == (sizeof(B) - 1)) && (!strncmp(A, B, NA)))
 
 char *bot_token = NULL;
 size_t bot_token_size = 0;
@@ -16,49 +18,45 @@ bool _warning = true;
 uint8_t threads_amount = 3;
 
 bool init_config(int argc, char *argv[], char *envp[]) {
-
-	char buff[1025];
-	size_t i, llen;
-	uint32_t line = 1;
+	char buf[2048], *buf2;
+	size_t len, blen, i;
 
 	FILE *handle = fopen("teabot.conf", "r");
-	while (!feof(handle)) {
-
-		#pragma GCC diagnostic push
-		#pragma GCC diagnostic ignored "-Wunused-result"
-		fgets(buff, 1024, handle);
-		#pragma GCC diagnostic pop
-
-		llen = strlen(buff);
-		if (buff[llen - 1] == '\n') {
-			buff[llen - 1] = '\0';
-			llen--;
+	while (fgets(buf, 2047, handle)) {
+		len = strlen(buf);
+		if (buf[len - 1] == '\n') {
+			buf[len - 1] = '\0';
+			len--;
 		} else {
-			buff[llen] = '\0';
+			buf[len] = '\0';
 		}
 
-		for (i = 0; i < llen; ++i) {
-			if (buff[i] == '#') {
+		for (i = 0; i < len; i++) {
+			if (buf[i] == '#') {
 				break;
-			}
+			} else if (buf[i] == '=') {
+				buf2 = (char *)malloc(len + 1);
+				strcpy(buf2, buf);
+				buf2[i] = '\0';
+				buf2 = trim(buf2);
+				blen = strlen(buf2);
 
-			if (buff[i] == '=') {
-				if (CMP(buff, "token", i)) {
-					bot_token = (char *)malloc(llen - i + 1);
-					memcpy(bot_token, &(buff[i + 1]), llen - i - 1);
-					bot_token[llen - i] = '\0';
-					TRIMN(bot_token, llen - i - 1)
+				if (QCMP(buf2, "token", blen)) {
+					bot_token = (char *)malloc(len - i);
+					strcpy(bot_token, &(buf[i + 1]));
+					bot_token = trim(bot_token);
 					bot_token_size = strlen(bot_token);
-					verbose_log("Bot token has been loaded: %s", bot_token);
+					verbose_log("Bot token has been loaded: \"%s\"", bot_token);
 				}
+
+				free(buf2);
 			}
 		}
-
-		memset(buff, '\0', llen);
-		line++;
 	}
+
 	fclose(handle);
-	return bot_token != NULL;
+
+	return (bot_token != NULL);
 }
 
 #undef CMP
