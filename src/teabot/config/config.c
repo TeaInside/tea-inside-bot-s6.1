@@ -5,8 +5,6 @@
 #include <teabot/helpers.h>
 #include <teabot/config/config_parser.h>
 
-#undef IN_CONFIG_PARSER
-
 #define QCMP(A, B, NA) ((NA == (sizeof(B) - 1)) && (!strncmp(A, B, NA)))
 
 char *bot_token = NULL;
@@ -81,7 +79,7 @@ bool init_config(int argc, char *argv[], char *envp[]) {
 							}
 						}
 					} else {
-						warning_log(duplicate_msg, "sudoers", line); \
+						warning_log(duplicate_msg, "sudoers", line);
 					}
 				}
 
@@ -98,3 +96,5 @@ bool init_config(int argc, char *argv[], char *envp[]) {
 }
 
 #undef CMP
+#undef CONFIG_TAKE
+#undef IN_CONFIG_PARSER
