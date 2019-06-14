@@ -13,7 +13,7 @@ char *storage_dir = NULL;
 size_t storage_dir_size = 0;
 uint32_t *sudoers;
 uint8_t sudoers_count = 0;
-bool _verbose = true;
+bool _verbose = false;
 bool _warning = true;
 uint8_t threads_amount = 3;
 
@@ -36,6 +36,13 @@ bool init_config(int argc, char *argv[], char *envp[]) {
 	size_t len, blen, i;
 	uint32_t line = 1;
 	const char duplicate_msg[] = "Duplicate %s config is ignored in teabot.conf on line %d";
+
+	for (int i = 0; i < argc; i++) {
+		if (!strcmp(argv[i], "--verbose")) {
+			_verbose = true;
+		}
+	}
+
 
 	FILE *handle = fopen("teabot.conf", "r");
 	while (fgets(buf, 2047, handle)) {
