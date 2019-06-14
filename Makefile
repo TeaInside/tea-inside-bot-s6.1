@@ -10,7 +10,7 @@ ifeq (${RELEASE_MODE},1)
 	LINKER_FLAGS  = -Wall -fno-stack-protector -s -O3 -o
 	COMPILER_FLAGS = -Wall -fno-stack-protector -Iinclude/ -s -O3 -c -o
 else
-	LINKER_FLAGS  = -Wall -fno-stack-protector -g3 -ggdb -Og -o
+	LINKER_FLAGS  = -Wall -fno-stack-protector -ggdb3 -Og -o
 	COMPILER_FLAGS = -Wall -fno-stack-protector -Iinclude/ -ggdb3 -Og -c -o
 endif
 

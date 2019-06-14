@@ -10,7 +10,7 @@ size_t teabot_curl_write_callback(void *contents, size_t size, size_t nmemb, voi
 	ptr = (char *)realloc(mem->val, mem->len + realsize + 1);
 	if(ptr == NULL) {
 		/* out of memory! */ 
-		printf("not enough memory (realloc returned NULL)\n");
+		warning_log("not enough memory (realloc returned NULL)\n");
 		return 0;
 	}
 

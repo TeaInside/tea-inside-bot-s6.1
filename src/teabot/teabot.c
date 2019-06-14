@@ -86,6 +86,7 @@ static ssize_t wait_n_read(int fd, void *buf, size_t szBuf) {
 
 void run_daemon() {
 
+	uint16_t uii;
 	bool dispatched;
 	cJSON *update_body, *updates, *update;
 	char *update_string;
@@ -98,7 +99,7 @@ void run_daemon() {
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 
-	for (int i = 0; i < 255; ++i) {
+	for (uint8_t i = 0; i < 255; ++i) {
 		busy_threads[i] = false;
 	}
 
@@ -128,6 +129,7 @@ void run_daemon() {
 
 	updates = cJSON_GetObjectItemCaseSensitive(update_body, "result");
 
+	uii = 0;
 	cJSON_ArrayForEach(update, updates) {
 
 		update_id = cJSON_GetObjectItemCaseSensitive(update, "update_id")->valueint;
@@ -138,9 +140,11 @@ void run_daemon() {
 
 			for (uint8_t i = 0; i < threads_amount; ++i) {
 				if (!busy_threads[i]) {
-					thread_jobs[i] = update;
+					thread_jobs[i] = cJSON_DetachItemFromArray(updates, uii);
 					latest_update_id = update_id;
-					write(threads[i].fd[1], "\0\0\0\0", 4);
+					if (write(threads[i].fd[1], "\0\0\0\0", 4) == -1) {
+						verbose_log("Error dispatch");
+					}
 					dispatched = true;
 					break;
 				}
@@ -152,9 +156,14 @@ void run_daemon() {
 				goto _start_dispatch;
 			}
 		}
+
+		uii++;
 	}
 
 	cycle_states_ptr++;
+
+	cJSON_Delete(update_body);
+	verbose_log("Parent process has cleaned up the update_body");
 
 	free(update_string);
 	update_string = NULL;
@@ -175,7 +184,7 @@ void *teabot_thread(void *fd) {
 		verbose_log("Thread %d is working...", thread->id);
 
 		verbose_log(
-			"Update ID: %d\n",
+			"Update ID: %d",
 			cJSON_GetObjectItemCaseSensitive(thread_jobs[thread->id], "update_id")->valueint
 		);
 
@@ -183,7 +192,9 @@ void *teabot_thread(void *fd) {
 		#include "responses.h"
 
 		busy_threads[thread->id] = false;
-		verbose_log("Thread %d has finished its job.\n", thread->id);
+		verbose_log("Thread %d has finished its job.", thread->id);
+		cJSON_Delete(thread_jobs[thread->id]);
+		verbose_log("Thread %d has cleaned up its heap.", thread->id);
 	} else {
 		warning_log("Thread %d wait_n_read error!", thread->id);
 	}
