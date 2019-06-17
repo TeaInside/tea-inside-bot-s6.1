@@ -15,7 +15,7 @@ uint32_t *sudoers;
 uint8_t sudoers_count = 0;
 bool _verbose = false;
 bool _warning = true;
-uint8_t threads_amount = 3;
+uint8_t threads_amount = 1;
 
 #define CONFIG_TAKE(VAR, VAR_SIZE, BUF, TARGET, BLEN, LOAD_LOG) \
 	if (QCMP(BUF, TARGET, BLEN)) { \
@@ -75,16 +75,17 @@ bool init_config(int argc, char *argv[], char *envp[]) {
 					if (sudoers == NULL) {
 						size_t ii, lp;
 						sudoers = (uint32_t *)malloc(sizeof(uint32_t *) * 32);
-						char *rbuf = (char *)malloc(blen + 1);
+						char *rbuf = (char *)calloc(len, 1);
 						for (lp = ii = i + 1; ii < len; ii++) {
 							if (buf[ii] == ',' || (len == (ii + 1))) {
-								strncpy(rbuf, &(buf[lp]), ii - i);
+								strncpy(rbuf, &(buf[lp]), ii - i - 1);
 								rbuf = trim(rbuf);
 								sudoers[sudoers_count] = atoi(rbuf);
 								verbose_log("Loaded sudoer user_id: %d", sudoers[sudoers_count++]);
 								lp = ii + 1;
 							}
 						}
+						free(rbuf);
 					} else {
 						warning_log(duplicate_msg, "sudoers", line);
 					}

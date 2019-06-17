@@ -13,7 +13,9 @@
 	extern bool _verbose;
 	extern bool _warning;
 	extern char *bot_token;
+	extern char *storage_dir;
 	extern size_t bot_token_size;
+	extern uint32_t *sudoers;
 #endif
 
 char *trim(char *str, const char *seps = NULL);
@@ -25,6 +27,9 @@ char *ltrim(char *str, const char *seps = NULL);
 
 #define warning_log(...) \
 	if (_warning) __log(__VA_ARGS__)
+
+#define error_log(...) \
+	__log(__VA_ARGS__)
 
 #define BOT_API_URL(VAR, TARGET) \
 	VAR = (char *)malloc(sizeof("https://api.telegram.org/bot") + strlen(TARGET) + bot_token_size + 2); \
