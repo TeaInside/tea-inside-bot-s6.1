@@ -50,8 +50,15 @@ size_t teabot_curl_write_callback(void *contents, size_t size, size_t nmemb, voi
 	curl_easy_setopt(CURL_RES, CURLOPT_WRITEFUNCTION, teabot_curl_write_callback); \
 	curl_easy_setopt(CURL_RES, CURLOPT_WRITEDATA, (void *)&VAR);
 
-
-
-
+typedef struct _in {
+	int *update_id;
+	cJSON *message;
+	int *message_id;
+	cJSON *from;
+	cJSON *chat;
+	cJSON *reply_to_message;
+	int *date;
+	char *text;
+} update;
 
 #endif

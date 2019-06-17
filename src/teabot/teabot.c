@@ -66,6 +66,7 @@ void run_daemon() {
 	uint64_t cycle = 0;
 	char *update_string;
 	cJSON *update_json = NULL, *result = NULL, *update = NULL;
+	uint64_t latest_update_id = 0;
 	threadpool thpool;
 	uint8_t i;
 
@@ -79,8 +80,14 @@ void run_daemon() {
 	if (result != NULL) {
 		cJSON_ArrayForEach(update, result) {
 			if (update != NULL) {
-				job = cJSON_Print(update);
-				thpool_add_work(thpool, (void *)thread_worker, (void *)job);
+				cJSON *update_id = cJSON_GetObjectItemCaseSensitive(update, "update_id");
+				if (update_id != NULL && (latest_update_id < (update_id->valueint))) {
+					latest_update_id = update_id->valueint;
+					job = cJSON_Print(update);
+					thpool_add_work(thpool, (void *)thread_worker, (void *)job);	
+				} else {
+					printf("skip\n");
+				}
 			}
 		}
 	}
@@ -91,7 +98,6 @@ void run_daemon() {
 	printf("Cycle: %d\n", cycle);
 	goto _start_daemon;
 
-
 exit_daemon:
 	free(storage_dir);
 	free(bot_token);
@@ -100,12 +106,17 @@ exit_daemon:
 
 void *thread_worker(void *update_string) {
 
+	#define _VAR(A) *A
+
 	cJSON *update = cJSON_Parse((char *)update_string);
 
+	if (update != NULL) {
+
+	}
+
+	printf("%s\n", update_string);
 
 	cJSON_Delete(update);
 	free(update_string);
-
-	#undef thread
 }
 
