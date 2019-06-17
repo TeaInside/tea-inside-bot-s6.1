@@ -15,7 +15,7 @@ uint32_t *sudoers;
 uint8_t sudoers_count = 0;
 bool _verbose = false;
 bool _warning = true;
-uint8_t threads_amount = 1;
+uint8_t threads_amount = 4;
 
 #define CONFIG_TAKE(VAR, VAR_SIZE, BUF, TARGET, BLEN, LOAD_LOG) \
 	if (QCMP(BUF, TARGET, BLEN)) { \

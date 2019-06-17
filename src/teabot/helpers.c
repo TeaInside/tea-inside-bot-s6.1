@@ -22,7 +22,7 @@ size_t teabot_curl_write_callback(void *contents, size_t size, size_t nmemb, voi
 	return realsize;
 }
 
-char *ltrim(char *str, const char *seps)
+char *__ltrim(char *str, const char *seps)
 {
     size_t totrim;
     if (seps == NULL) {
@@ -41,7 +41,7 @@ char *ltrim(char *str, const char *seps)
     return str;
 }
 
-char *rtrim(char *str, const char *seps)
+char *__rtrim(char *str, const char *seps)
 {
     size_t i = strlen(str) - 1;
 
@@ -56,7 +56,7 @@ char *rtrim(char *str, const char *seps)
     return str;
 }
 
-char *trim(char *str, const char *seps)
+char *__trim(char *str, const char *seps)
 {
-    return ltrim(rtrim(str, seps), seps);
+    return __ltrim(__rtrim(str, seps), seps);
 }

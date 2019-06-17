@@ -18,9 +18,13 @@
 	extern uint32_t *sudoers;
 #endif
 
-char *trim(char *str, const char *seps = NULL);
-char *rtrim(char *str, const char *seps = NULL);
-char *ltrim(char *str, const char *seps = NULL);
+char *__trim(char *str, const char *seps);
+char *__rtrim(char *str, const char *seps);
+char *__ltrim(char *str, const char *seps);
+
+#define trim(STR) __trim(STR, NULL)
+#define rtrim(STR) __rtrim(STR, NULL)
+#define ltrim(STR) __ltrim(STR, NULL)
 
 #define verbose_log(...) \
 	if (_verbose) __log(__VA_ARGS__)
