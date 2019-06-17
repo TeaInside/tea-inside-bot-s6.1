@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <cjson/cJSON.h>
 #include <teabot/logger/logger.h>
 
 #ifndef IN_CONFIG_PARSER
@@ -49,16 +50,5 @@ size_t teabot_curl_write_callback(void *contents, size_t size, size_t nmemb, voi
 #define curl_write(CURL_RES, VAR) \
 	curl_easy_setopt(CURL_RES, CURLOPT_WRITEFUNCTION, teabot_curl_write_callback); \
 	curl_easy_setopt(CURL_RES, CURLOPT_WRITEDATA, (void *)&VAR);
-
-typedef struct _in {
-	int *update_id;
-	cJSON *message;
-	int *message_id;
-	cJSON *from;
-	cJSON *chat;
-	cJSON *reply_to_message;
-	int *date;
-	char *text;
-} update;
 
 #endif

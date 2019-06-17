@@ -62,19 +62,19 @@ nullret:
 
 void run_daemon() {
 	char *job;
-	bool dispatched;
 	uint64_t cycle = 0;
 	char *update_string;
 	cJSON *update_json = NULL, *result = NULL, *update = NULL;
-	uint64_t latest_update_id = 0;
+	int latest_update_id = 0;
 	threadpool thpool;
-	uint8_t i;
 
 	thpool = thpool_init(threads_amount);
 
 	_start_daemon:
 
-	update_json = cJSON_Parse(update_);
+	update_string = strdup(update_);
+	update_json = cJSON_Parse(update_string);
+	free(update_string);
 	result = cJSON_GetObjectItemCaseSensitive(update_json, "result");
 
 	if (result != NULL) {
@@ -84,9 +84,7 @@ void run_daemon() {
 				if (update_id != NULL && (latest_update_id < (update_id->valueint))) {
 					latest_update_id = update_id->valueint;
 					job = cJSON_Print(update);
-					thpool_add_work(thpool, (void *)thread_worker, (void *)job);	
-				} else {
-					printf("skip\n");
+					thpool_add_work(thpool, thread_worker, job);	
 				}
 			}
 		}
@@ -95,7 +93,7 @@ void run_daemon() {
 	cycle++;
 	cJSON_Delete(update_json);
 	update_json = NULL;
-	printf("Cycle: %d\n", cycle);
+	printf("Cycle: %ld\n", cycle);
 	goto _start_daemon;
 
 exit_daemon:
@@ -104,19 +102,56 @@ exit_daemon:
 	free(sudoers);
 }
 
-void *thread_worker(void *update_string) {
+void *thread_worker(void *__update_string) {
 
-	#define _VAR(A) *A
+	#define update_string ((char *)__update_string)
+	#define SETSE(TMP_VAR, KEY, MAIN, TARGET, PROPERTY) \
+		TMP_VAR = cJSON_GetObjectItemCaseSensitive(MAIN, KEY); \
+		if (TMP_VAR != NULL) { \
+			TARGET = PROPERTY; \
+		}
+	#define DETSE(KEY, MAIN, TARGET) \
+		if (MAIN != NULL) { \
+			TARGET = cJSON_GetObjectItemCaseSensitive(MAIN, KEY); \
+		}
 
-	cJSON *update = cJSON_Parse((char *)update_string);
+	cJSON *tmp, *tmp2;
 
-	if (update != NULL) {
+	// Initialize data with NULL.
+	update_data data = {
+		.main = NULL,
+		.update_id = NULL,
+		.message = NULL,
+		.message_id = NULL,
+		.from = NULL,
+		.chat = NULL,
+		.reply_to_message = NULL,
+		.date = NULL,
+		.text = NULL
+	};
 
+	data.main = cJSON_Parse(update_string);
+
+	if (data.main != NULL) {
+
+		DETSE("message", data.main, data.message)
+		DETSE("from", data.message, data.from)
+		DETSE("chat", data.message, data.chat)
+		DETSE("reply_to_message", data.message, data.reply_to_message)
+
+		SETSE(tmp, "update_id", data.main, data.update_id, &(tmp->valueint))
+		SETSE(tmp, "text", data.message, data.text, tmp->valuestring)
+		SETSE(tmp, "date", data.message, data.date, &(tmp->valueint))
+
+		if (data.text != NULL) {
+			printf("%d\n", *data.update_id);
+		}
 	}
 
-	printf("%s\n", update_string);
-
-	cJSON_Delete(update);
+	cJSON_Delete(data.main);
 	free(update_string);
+	#undef DETSE
+	#undef SETSE
+	#undef update_string
 }
 

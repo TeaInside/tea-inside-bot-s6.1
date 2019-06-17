@@ -1,6 +1,6 @@
 
-COMPILER = gcc
-LINKER = gcc
+COMPILER = g++
+LINKER = g++
 BIN_FILE = teabot
 LIBS = -lpthread -lcurl
 SOURCE_DIR = src/
