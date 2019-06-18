@@ -44,7 +44,7 @@ function rd(string $str): string
 $noCompile = true;
 
 rscan_callback(__DIR__."/src", function (string $file) use ($argv, &$noCompile) {
-	if (preg_match("/(.+)(?:\.frag\.)(h|c|cpp)$/", $file, $f)) {
+	if (preg_match("/(.+)(?:\.frag\.)(h|c|cc|cpp)$/", $file, $f)) {
 
 		$targetFile = $f[1].".".$f[2];
 		$dontCompile = file_exists($targetFile) && (filemtime($file) < filemtime($targetFile));
