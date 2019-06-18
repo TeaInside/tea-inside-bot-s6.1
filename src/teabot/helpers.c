@@ -4,7 +4,6 @@
 size_t teabot_curl_write_callback(void *contents, size_t size, size_t nmemb, void *userp) {
 	size_t realsize = size * nmemb;
 	char *ptr;
-
 	curl_data *mem = (curl_data *)userp;
 
 	ptr = (char *)realloc(mem->val, mem->len + realsize + 1);
@@ -18,7 +17,6 @@ size_t teabot_curl_write_callback(void *contents, size_t size, size_t nmemb, voi
 	memcpy(&(mem->val[mem->len]), contents, realsize);
 	mem->len += realsize;
 	mem->val[mem->len] = 0;
-
 	return realsize;
 }
 
@@ -33,8 +31,7 @@ char *__ltrim(char *str, const char *seps)
         size_t len = strlen(str);
         if (totrim == len) {
             str[0] = '\0';
-        }
-        else {
+        } else {
             memmove(str, str + totrim, len + 1 - totrim);
         }
     }

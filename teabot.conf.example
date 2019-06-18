@@ -4,3 +4,6 @@ token = 448907482:AAF0jSFxwmFMdnTaCh2vLezXUI0F1_DpBuY
 
 # Storage
 storage_dir = storage
+
+# Sudoer users.
+sudoers = 243692601, 377596941

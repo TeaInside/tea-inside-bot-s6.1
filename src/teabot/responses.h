@@ -17,4 +17,8 @@ responses:
 		#include "responses/start.h"
 	}
 
+	if (!strcmp(data->text, "/help")) {
+		#include "responses/help.h"
+	}
+
 }

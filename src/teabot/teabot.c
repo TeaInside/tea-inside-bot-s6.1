@@ -75,17 +75,19 @@ nullret:
 
 void run_daemon() {
 	char *job;
+	threadpool thpool;
 	uint64_t cycle = 0;
 	char *update_string;
-	cJSON *update_json = NULL, *result = NULL, *update = NULL;
 	int latest_update_id = 0;
-	threadpool thpool;
+	cJSON *update_json = NULL, *result = NULL, *update = NULL, *update_id = NULL;
 
 	thpool = thpool_init(threads_amount);
 
 	_start_daemon:
 
-	update_string = strdup("{\"ok\":true,\"result\":[{    \"update_id\": 345237741,    \"message\": {        \"message_id\": 22283,        \"from\": {            \"id\": 243692601,            \"is_bot\": false,            \"first_name\": \"Ammar\",            \"last_name\": \"Faizi\",            \"username\": \"ammarfaizi2\",            \"language_code\": \"en\"        },        \"chat\": {            \"id\": -1001128970273,            \"title\": \"Private Cloud\",            \"type\": \"supergroup\"        },        \"date\": 1555600051,        \"text\": \"/start\",        \"entities\": [            {                \"offset\": 0,                \"length\": 6,                \"type\": \"bot_command\"            }        ]    }}]}");
+	update_string = strdup("{\"ok\":true,\"result\":[{    \"update_id\": 345237741,    \"message\": {        \"message_id\": 22283,        \"from\": {\"id\": 243692601,\"is_bot\": false,\"first_name\": \"Ammar\",\"last_name\": \"Faizi\",\"username\": \"ammarfaizi2\",\"language_code\": \"en\"        },        \"chat\": {\"id\": -1001128970273,\"title\": \"Private Cloud\",\"type\": \"private\"        },        \"date\": 1555600051,        \"text\": \""
+		"/help" \
+		"\",        \"entities\": [{    \"offset\": 0,    \"length\": 6,    \"type\": \"bot_command\"}        ]    }}]}");
 	update_json = cJSON_Parse(update_string);
 	free(update_string);
 	result = cJSON_GetObjectItemCaseSensitive(update_json, "result");
@@ -93,7 +95,7 @@ void run_daemon() {
 	if (result != NULL) {
 		cJSON_ArrayForEach(update, result) {
 			if (update != NULL) {
-				cJSON *update_id = cJSON_GetObjectItemCaseSensitive(update, "update_id");
+				update_id = cJSON_GetObjectItemCaseSensitive(update, "update_id");
 				if (update_id != NULL && (latest_update_id < (update_id->valueint))) {
 					latest_update_id = update_id->valueint;
 					job = cJSON_Print(update);
@@ -136,10 +138,12 @@ void *thread_worker(void *__update_string) {
 	};
 
 	data.main = cJSON_Parse(update_string);
+	free(update_string);
+	__update_string = NULL;
 
 	if (data.main != NULL) {
 
-		printf("%s\n", update_string);
+		// printf("%s \n", update_string);
 
 		DETSE("message", data.main, data.message)
 		DETSE("from", data.message, data.from)
@@ -157,7 +161,6 @@ void *thread_worker(void *__update_string) {
 	}
 
 	cJSON_Delete(data.main);
-	free(update_string);
 	#undef DETSE
 	#undef SETSE
 	#undef update_string

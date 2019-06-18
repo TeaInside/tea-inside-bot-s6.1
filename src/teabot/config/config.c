@@ -32,13 +32,15 @@ uint8_t threads_amount = 4;
 
 
 bool init_config(int argc, char *argv[], char *envp[]) {
-	char buf[2048], *buf2;
-	size_t len, blen, i;
-	uint32_t line = 1;
-	const char duplicate_msg[] = "Duplicate %s config is ignored in teabot.conf on line %d";
 
-	for (int i = 0; i < argc; i++) {
-		if (!strcmp(argv[i], "--verbose")) {
+	const char duplicate_msg[] = "Duplicate %s config is ignored in teabot.conf on line %d";
+	char buf[2048], *buf2, *rbuf;
+	size_t len, blen, i, ii, lp;
+	uint32_t line = 1;
+	int j;
+
+	for (j = 0; j < argc; j++) {
+		if (!strcmp(argv[j], "--verbose")) {
 			_verbose = true;
 		}
 	}
@@ -73,9 +75,8 @@ bool init_config(int argc, char *argv[], char *envp[]) {
 
 				if (QCMP(buf2, "sudoers", blen)) {
 					if (sudoers == NULL) {
-						size_t ii, lp;
 						sudoers = (uint32_t *)malloc(sizeof(uint32_t *) * 32);
-						char *rbuf = (char *)calloc(len, 1);
+						rbuf = (char *)calloc(len, 1);
 						for (lp = ii = i + 1; ii < len; ii++) {
 							if (buf[ii] == ',' || (len == (ii + 1))) {
 								strncpy(rbuf, &(buf[lp]), ii - i - 1);

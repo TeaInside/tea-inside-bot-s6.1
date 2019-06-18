@@ -21,6 +21,9 @@ SOURCES_DIR = $(shell find ${SOURCE_DIR} -type d)
 DEPDIR = ${SOURCES_DIR:%=${ROOT_DEPDIR}/%}
 DEPFLAGS = -MT $@ -MMD -MP -MF ${ROOT_DEPDIR}/$*.d
 DEPFILES = ${SOURCES:%=${ROOT_DEPDIR}/%.d}
+BUILD_FRAGS = $(shell php generator.php build)
+DEPFRAGS = $(shell php generator.php deps)
+
 
 all: ${BIN_FILE}
 
@@ -30,7 +33,10 @@ ${ROOT_DEPDIR}:
 ${DEPDIR}: | ${ROOT_DEPDIR}
 	mkdir -p $@
 
-${OBJECTS}: | ${DEPDIR}
+${DEPFRAGS}: ${BUILD_FRAGS}
+	php generator.php
+
+${OBJECTS}: | ${DEPDIR} ${DEPFRAGS}
 	${COMPILER} ${DEPFLAGS} ${COMPILER_FLAGS} $@ ${@:%.o=%}
 
 ${BIN_FILE}: ${OBJECTS}
@@ -40,10 +46,11 @@ ${BIN_FILE}: ${OBJECTS}
 
 release:
 	make clean
-	make RELEASE_MODE=1
+	make RELEASE_MODE=1 ${RELEASE_FLAGS}
 	strip -s ${BIN_FILE}
 
 clean:
 	rm -rf ${DEPFILES}
 	rm -rf ${OBJECTS}
 	rm -rf ${BIN_FILE}
+	php generator.php clean

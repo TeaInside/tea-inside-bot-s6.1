@@ -1,10 +1,11 @@
+
 const char *msg;
 char *body, *res;
 
 if (!strcmp(chat_type->valuestring, "private")) {
-	msg = "Send+%2Fhelp+to+see+the+command+list.";
+	msg = <?php echo rd(urlencode("Send /help to see the command list.")); ?>;
 } else {
-	msg = "%2Fstart+command+can+only+be+used+in+private%21";
+	msg = <?php echo rd(urlencode("/start command can only be used in private!")); ?>;
 }
 
 #define format \
