@@ -1,6 +1,11 @@
 
 # Tea Inside Bot S6.1
 
+# Install Deps
+```
+sudo apt install libcurl4-gnutls-dev -y
+```
+
 # Debug Mode
 ```
 git clone https://github.com/TeaInside/tea-inside-bot-s6.1 teabot
