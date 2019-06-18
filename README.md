@@ -1,4 +1,6 @@
 
+# Tea Inside Bot S6.1
+
 # Debug Mode
 ```
 git clone https://github.com/TeaInside/tea-inside-bot-s6.1 teabot
@@ -19,3 +21,6 @@ cp teabot.conf.example teabot.conf
 ## Edit teabot.conf
 ./teabot
 ```
+
+# License
+This software is licensed under the License MIT.
