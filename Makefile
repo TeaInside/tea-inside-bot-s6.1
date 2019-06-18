@@ -30,11 +30,11 @@ all: ${BIN_FILE}
 ${ROOT_DEPDIR}:
 	mkdir -p $@
 
-${DEPDIR}: | ${ROOT_DEPDIR}
-	mkdir -p $@
-
 ${DEPFRAGS}: ${BUILD_FRAGS}
 	php generator.php
+
+${DEPDIR}: | ${ROOT_DEPDIR}
+	mkdir -p $@
 
 ${OBJECTS}: | ${DEPDIR} ${DEPFRAGS}
 	${COMPILER} ${DEPFLAGS} ${COMPILER_FLAGS} $@ ${@:%.o=%}
