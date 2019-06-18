@@ -16,7 +16,10 @@
 	extern char *bot_token;
 	extern char *storage_dir;
 	extern size_t bot_token_size;
-	extern uint32_t *sudoers;
+	extern int *sudoers;
+	extern const char *lang;
+	extern uint8_t sudoers_count;
+	extern uint8_t threads_amount;
 #endif
 
 char *__trim(char *str, const char *seps);
@@ -47,6 +50,7 @@ typedef struct _curl_data {
 
 size_t teabot_curl_write_callback(void *contents, size_t size, size_t nmemb, void *userp);
 unsigned char *urlencode(const char *s, size_t len = 0);
+char *escapeshellarg(char *str);
 
 #define curl_write(CURL_RES, VAR) \
 	curl_easy_setopt(CURL_RES, CURLOPT_WRITEFUNCTION, teabot_curl_write_callback); \

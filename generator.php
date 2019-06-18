@@ -42,8 +42,7 @@ function rd(string $str): string
 }
 
 $noCompile = true;
-
-rscan_callback(__DIR__."/src", function (string $file) use ($argv, &$noCompile) {
+$closure = function (string $file) use ($argv, &$noCompile) {
 	if (preg_match("/(.+)(?:\.frag\.)(h|c|cc|cpp)$/", $file, $f)) {
 
 		$targetFile = $f[1].".".$f[2];
@@ -74,7 +73,10 @@ rscan_callback(__DIR__."/src", function (string $file) use ($argv, &$noCompile) 
 		eval("?>".$content);
 		file_put_contents($targetFile, ob_get_clean());
 	}
-});
+};
+
+rscan_callback(__DIR__."/src", $closure);
+rscan_callback(__DIR__."/include", $closure);
 
 if ($noCompile) {
 	print "generator.php: Nothing to be done for 'all'\n";

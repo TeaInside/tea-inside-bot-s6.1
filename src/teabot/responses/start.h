@@ -1,10 +1,11 @@
+
 const char *msg;
 char *body, *res;
 
 if (!strcmp(chat_type->valuestring, "private")) {
-	msg = "Send+%2Fhelp+to+see+the+command+list.";
+	msg = LANG_CHOICE(start_private, lang);
 } else {
-	msg = "%2Fstart+command+can+only+be+used+in+private%21";
+	msg = LANG_CHOICE(start_group, lang);
 }
 
 #define format \
@@ -19,15 +20,8 @@ sprintf(body, format,
 	msg
 );
 #undef format
-
-// printf("%s\n", body);
 res = send_message(body);
-// printf("res: %s\n", res);
-// fflush(stdout);
-
 free(body);
 free(res);
 res = body = NULL;
-
-start_ret:
 return;
