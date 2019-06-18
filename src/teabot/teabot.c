@@ -11,6 +11,7 @@
 #include <teabot/network.h>
 #include <teabot/helpers.h>
 #include <teabot/msg_type.h>
+#include <teabot/telegram_api.h>
 
 #define SETSE(TMP_VAR, KEY, MAIN, TARGET, PROPERTY) \
 	TMP_VAR = cJSON_GetObjectItemCaseSensitive(MAIN, KEY); \
@@ -84,7 +85,7 @@ void run_daemon() {
 
 	_start_daemon:
 
-	update_string = strdup(update_);
+	update_string = strdup("{\"ok\":true,\"result\":[{    \"update_id\": 345237741,    \"message\": {        \"message_id\": 22283,        \"from\": {            \"id\": 243692601,            \"is_bot\": false,            \"first_name\": \"Ammar\",            \"last_name\": \"Faizi\",            \"username\": \"ammarfaizi2\",            \"language_code\": \"en\"        },        \"chat\": {            \"id\": -1001128970273,            \"title\": \"Private Cloud\",            \"type\": \"supergroup\"        },        \"date\": 1555600051,        \"text\": \"/start\",        \"entities\": [            {                \"offset\": 0,                \"length\": 6,                \"type\": \"bot_command\"            }        ]    }}]}");
 	update_json = cJSON_Parse(update_string);
 	free(update_string);
 	result = cJSON_GetObjectItemCaseSensitive(update_json, "result");
@@ -106,6 +107,7 @@ void run_daemon() {
 	cJSON_Delete(update_json);
 	update_json = NULL;
 	printf("Cycle: %ld\n", cycle);
+	sleep(1000);
 	goto _start_daemon;
 
 exit_daemon:
@@ -118,18 +120,18 @@ void *thread_worker(void *__update_string) {
 
 	#define update_string ((char *)__update_string)
 
-	cJSON *tmp, *tmp2;
+	cJSON *tmp;
 
 	// Initialize data with NULL.
 	update_data data = {
 		.main = NULL,
-		.update_id = NULL,
+		.update_id = 0,
 		.message = NULL,
-		.message_id = NULL,
+		.message_id = 0,
 		.from = NULL,
 		.chat = NULL,
 		.reply_to_message = NULL,
-		.date = NULL,
+		.date = 0,
 		.text = NULL
 	};
 
@@ -137,14 +139,17 @@ void *thread_worker(void *__update_string) {
 
 	if (data.main != NULL) {
 
+		printf("%s\n", update_string);
+
 		DETSE("message", data.main, data.message)
 		DETSE("from", data.message, data.from)
 		DETSE("chat", data.message, data.chat)
 		DETSE("reply_to_message", data.message, data.reply_to_message)
 
-		SETSE(tmp, "update_id", data.main, data.update_id, &(tmp->valueint))
+		SETSE(tmp, "update_id", data.main, data.update_id, tmp->valueint)
 		SETSE(tmp, "text", data.message, data.text, tmp->valuestring)
-		SETSE(tmp, "date", data.message, data.date, &(tmp->valueint))
+		SETSE(tmp, "date", data.message, data.date, tmp->valueint)
+		SETSE(tmp, "message_id", data.message, data.message_id, tmp->valueint)
 
 		if (data.text != NULL) {
 			internal_thread_worker(&data);

@@ -63,21 +63,23 @@ char *__trim(char *str, const char *seps)
 
 static unsigned char hexchars[] = "0123456789ABCDEF";
 
-char *php_url_encode(char const *s, size_t len)
+unsigned char *urlencode(const char *s, size_t len)
 {
     register unsigned char c;
-    unsigned char *to;
+    unsigned char *to, *start;
     unsigned char const *from, *end;
-    zend_string *start;
+
+    if (len == 0) {
+        len = strlen(s);
+    }
 
     from = (unsigned char *)s;
     end = (unsigned char *)s + len;
-    start = zend_string_safe_alloc(3, len, 0, 0);
-    to = (unsigned char*)ZSTR_VAL(start);
+    to = (unsigned char *)malloc((len * 3) + 1);
+    start = to;
 
     while (from < end) {
         c = *from++;
-
         if (c == ' ') {
             *to++ = '+';
 #ifndef CHARSET_EBCDIC
@@ -102,8 +104,6 @@ char *php_url_encode(char const *s, size_t len)
         }
     }
     *to = '\0';
-
-    start = zend_string_truncate(start, to - (unsigned char*)ZSTR_VAL(start), 0);
 
     return start;
 }

@@ -16,13 +16,13 @@ typedef struct _daemon_thread {
 
 typedef struct _in {
 	cJSON *main;
-	int *update_id;
+	int update_id;
 	cJSON *message;
-	int *message_id;
+	int message_id;
 	cJSON *from;
 	cJSON *chat;
 	cJSON *reply_to_message;
-	int *date;
+	int date;
 	char *text;
 } update_data;
 

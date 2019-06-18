@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 #include <teabot/teabot.h>
+#include <teabot/helpers.h>
 #include <teabot/config/config_parser.h>
 
 int main(int argc, char *argv[], char *envp[]) {
