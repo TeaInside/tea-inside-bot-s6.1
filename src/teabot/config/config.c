@@ -110,8 +110,8 @@ bool init_config(int argc, char *argv[], char *envp[]) {
 	fclose(handle);
 
 	if (threads_amount == 0) {
-		verbose_log("Thread amount is not defined in the config file");
-		verbose_log("Set thread amount to 1");
+		verbose_log("Threads amount is not defined in the config file");
+		verbose_log("Set threads amount to 1");
 		threads_amount = 1;
 	}
 

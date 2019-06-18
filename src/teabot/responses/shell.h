@@ -14,10 +14,7 @@ if (user_id == NULL) {
 	goto shell_noexec;
 }
 
-printf("aa: %d %d\n", user_id->valueint, sudoers[1]);
-
 for (uint8_t i = 0; i < sudoers_count; i++) {
-	printf("aa: %d %d\n", user_id->valueint, sudoers[i]);
 	if (user_id->valueint == sudoers[i]) {
 		is_sudo = true;
 		break;

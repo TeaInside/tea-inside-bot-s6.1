@@ -55,7 +55,7 @@ responses:
 			free(input);
 			input = NULL;
 
-			printf("cmd: %s\n", cmd);
+			verbose_log("cmd: %s\n", cmd);
 
 			#include "responses/shell.h"
 		}

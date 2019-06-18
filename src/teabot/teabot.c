@@ -64,6 +64,8 @@ void run_daemon() {
 	update_json = NULL;
 	printf("Cycle: %ld\n", cycle);
 	noff = !noff;
+
+	sleep(1);
 	goto _start_daemon;
 
 	free(storage_dir);
@@ -88,6 +90,7 @@ void *thread_worker(void *__update_string) {
 	};
 
 	data.main = cJSON_Parse(update_string);
+	verbose_log("%s\n", update_string);
 	free(update_string);
 	__update_string = NULL;
 
