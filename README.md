@@ -3,14 +3,14 @@
 ```
 git clone https://github.com/TeaInside/tea-inside-bot-s6.1 teabot
 cd teabot
-make
+make -j2
 ```
 
 # Release Mode
 ```
 git clone https://github.com/TeaInside/tea-inside-bot-s6.1 teabot
 cd teabot
-make release
+make release RELEASE_FLAG="-j2"
 ```
 
 # Usage
